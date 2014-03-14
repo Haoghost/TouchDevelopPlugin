@@ -1,19 +1,34 @@
 package touchdevelopplugin.editors;
 
-
+import javax.swing.JDialog;
 
 import org.eclipse.jface.text.*;
-import org.eclipse.ui.internal.dialogs.ViewContentProvider;
 
-import edu.uta.cse.views.ButtonsView;
-
+import edu.uta.cse.views.DialogTest;
 
 public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
-	//protected DialogTest dt;
-	//int startP,endP;
-	//String theWord;
+	public static int StartCursor;
+	public int getStartCursor() {
+		return StartCursor;
+	}
+	public void setStartCursor(int startCursor) {
+		StartCursor = startCursor;
+	}
+	public int getEndCursor() {
+		return EndCursor;
+	}
+	public void setEndCursor(int endCursor) {
+		EndCursor = endCursor;
+	}
 
+	public static int EndCursor;
+	public ITextViewer getfText() {
+		return fText;
+	}
+	public void setfText(ITextViewer fText) {
+		this.fText = fText;
+	}
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
 
@@ -24,20 +39,12 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 		
 		if (!selectComment(pos)) {
 			selectWord(pos);
-			try {
-				selectOneWord(part);
-			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//dt = new DialogTest();
-			//dt.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			//dt.setVisible(true);
+			
+			
 		}
 	}
 	protected boolean selectComment(int caretPos) {
 		IDocument doc = fText.getDocument();
-
 		int startPos, endPos;
 
 		try {
@@ -54,7 +61,6 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 					break;
 				--pos;
 			}
-			
 
 			if (c != '\"')
 				return false;
@@ -85,13 +91,20 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		return false;
 	}
+	/**
+	
+	system.out.print
+	
+	*/
+	private void print(String selectedWord){
+		System.out.print(selectedWord);
+	}
 	protected boolean selectWord(int caretPos) {
-
+		StringBuffer sb = new StringBuffer("");
 		IDocument doc = fText.getDocument();
 		int startPos, endPos;
 
 		try {
-
 			int pos = caretPos;
 			char c;
 
@@ -101,9 +114,7 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 					break;
 				--pos;
 			}
-
 			startPos = pos;
-
 			pos = caretPos;
 			int length = doc.getLength();
 
@@ -113,83 +124,20 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 					break;
 				++pos;
 			}
-
 			endPos = pos;
 			selectRange(startPos, endPos);
-			
+			this.setStartCursor(startPos);
+			this.setEndCursor(endPos);
+			for(int i=0; i<endPos-startPos-1;i++){
+				sb.append(doc.getChar(startPos+1+i));
+			}
+			System.out.println(sb);
 			return true;
 
 		} catch (BadLocationException x) {
 		}
-
-
+		
 		return false;
-	}
-	
-	//this method select the word
-	public void selectOneWord(ITextViewer part) throws BadLocationException{
-		
-		int currentPos = part.getSelectedRange().x;
-		//int currentPos = position;
-		//System.out.println(currentPos);
-		int startPos, endPos;
-		int startP=0;
-		int endP=0;
-
-		
-
-			int pos = currentPos;
-			char c;
-
-			while (pos >= 0) {
-				c = fText.getDocument().getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-				{
-					//System.out.println("!!!!!!!!"+c);
-					break;
-				}else{
-					//System.out.println("########"+c);
-					startPos = pos;
-					startP = startPos;
-					//System.out.println("$$$$$$$$"+startPos);
-				     --pos;
-				}
-			}
-			
-			pos = currentPos;
-			int length = fText.getDocument().getLength();
-
-			while (pos < length) {
-				c = fText.getDocument().getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-				{
-					break;
-				}else{
-					endPos = pos;
-					endP = endPos;
-					++pos;
-				}
-			}
-
-			
-//			System.out.println("start:   " + startP +"   "+"end:   "+ endP );
-//			String selectedWord = fText.getDocument().get(startP,endP+1);
-			String theWord="";
-			for(int i = startP; i<=endP; i++){
-			char selectedLetter = fText.getDocument().getChar(i);
-			String selectedWord = "";
-			selectedWord = selectedWord+selectedLetter;
-			theWord += selectedWord;
-			}
-//			System.out.println(theWord);
-			
-		//System.out.println(abc);
-		//return theWord;
-			if(theWord.equals("class")){
-				ViewContentProvider bv = new ViewContentProvider();
-
-			}
-		
 	}
 
 	private void selectRange(int startPos, int stopPos) {
