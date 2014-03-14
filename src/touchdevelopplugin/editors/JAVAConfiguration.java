@@ -16,30 +16,6 @@ public class JAVAConfiguration extends SourceViewerConfiguration {
 	private JAVAScanner scanner;
 	private ColorManager colorManager;
 
-	public JAVADoubleClickStrategy getDoubleClickStrategy() {
-		return doubleClickStrategy;
-	}
-	public void setDoubleClickStrategy(JAVADoubleClickStrategy doubleClickStrategy) {
-		this.doubleClickStrategy = doubleClickStrategy;
-	}
-	public JAVATagScanner getTagScanner() {
-		return tagScanner;
-	}
-	public void setTagScanner(JAVATagScanner tagScanner) {
-		this.tagScanner = tagScanner;
-	}
-	public JAVAScanner getScanner() {
-		return scanner;
-	}
-	public void setScanner(JAVAScanner scanner) {
-		this.scanner = scanner;
-	}
-	public ColorManager getColorManager() {
-		return colorManager;
-	}
-	public void setColorManager(ColorManager colorManager) {
-		this.colorManager = colorManager;
-	}
 	public JAVAConfiguration(ColorManager colorManager) {
 		this.colorManager = colorManager;
 	}

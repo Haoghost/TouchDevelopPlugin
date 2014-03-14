@@ -3,9 +3,6 @@ package edu.uta.cse.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -13,8 +10,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
-
-import touchdevelopplugin.editors.JAVAEditor;
 
 
 /**
@@ -168,54 +163,17 @@ public class ButtonsView extends ViewPart {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				showMessage("Double-click detected on "+obj.toString());
-				
-				//=================show message================
-				
-				
-				
-				
-				
-				
-				
-				
-				//=================show message================
-				
-				
-				
 			}
 		};
 	}
 
 	private void hookDoubleClickAction() {
-		    viewer.addDoubleClickListener(new IDoubleClickListener() {
-		    
-		    public void doubleClick(DoubleClickEvent event) {
-		    	this.repalceMethodName("String");
-		    }
-		    private void repalceMethodName(String s){
-				ISelection selection = viewer.getSelection();
-			     Object obj = ((IStructuredSelection)selection).getFirstElement();
-			     JAVAEditor view = (JAVAEditor)getSite().getPage().getActiveEditor();
-			     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
-			     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor();
-			     IDocument doc =  view.getJavaConfiguration().getDoubleClickStrategy().getfText().getDocument();
-			     String content = doc.get();
-			     StringBuffer sb = new StringBuffer("");
-			     sb.append(content.substring(0,start+1));
-			     sb.append(s);
-			     sb.append(content.substring(end, content.length()));
-			     doc.set(sb.toString());
-			     int offset = start + 1;
-				 int length = s.length();
-				 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
 			}
-		   });
-		    
-		    
-		    
-		   
+		});
 	}
-	
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),

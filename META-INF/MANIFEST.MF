@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TouchDevelopPlugin
-Bundle-SymbolicName: TouchDevelopPlugin;singleton:=true
+Bundle-SymbolicName: TouchDevelopPlugin; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: touchdevelopplugin.Activator
 Bundle-Vendor: CSE6324-TEAM3

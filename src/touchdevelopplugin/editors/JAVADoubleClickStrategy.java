@@ -8,27 +8,8 @@ import edu.uta.cse.views.DialogTest;
 
 public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
-	public static int StartCursor;
-	public int getStartCursor() {
-		return StartCursor;
-	}
-	public void setStartCursor(int startCursor) {
-		StartCursor = startCursor;
-	}
-	public int getEndCursor() {
-		return EndCursor;
-	}
-	public void setEndCursor(int endCursor) {
-		EndCursor = endCursor;
-	}
-
-	public static int EndCursor;
-	public ITextViewer getfText() {
-		return fText;
-	}
-	public void setfText(ITextViewer fText) {
-		this.fText = fText;
-	}
+	protected DialogTest dt;
+	
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
 
@@ -40,7 +21,9 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 		if (!selectComment(pos)) {
 			selectWord(pos);
 			
-			
+			dt = new DialogTest();
+			dt.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dt.setVisible(true);
 		}
 	}
 	protected boolean selectComment(int caretPos) {
@@ -91,20 +74,13 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		return false;
 	}
-	/**
-	
-	system.out.print
-	
-	*/
-	private void print(String selectedWord){
-		System.out.print(selectedWord);
-	}
 	protected boolean selectWord(int caretPos) {
-		StringBuffer sb = new StringBuffer("");
+
 		IDocument doc = fText.getDocument();
 		int startPos, endPos;
 
 		try {
+
 			int pos = caretPos;
 			char c;
 
@@ -114,7 +90,9 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 					break;
 				--pos;
 			}
+
 			startPos = pos;
+
 			pos = caretPos;
 			int length = doc.getLength();
 
@@ -124,14 +102,9 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 					break;
 				++pos;
 			}
+
 			endPos = pos;
 			selectRange(startPos, endPos);
-			this.setStartCursor(startPos);
-			this.setEndCursor(endPos);
-			for(int i=0; i<endPos-startPos-1;i++){
-				sb.append(doc.getChar(startPos+1+i));
-			}
-			System.out.println(sb);
 			return true;
 
 		} catch (BadLocationException x) {
@@ -144,6 +117,5 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 		int offset = startPos + 1;
 		int length = stopPos - offset;
 		fText.setSelectedRange(offset, length);
-		
 	}
 }
