@@ -2,40 +2,61 @@ package edu.uta.cse.main;
 
 //import org.eclipse.jface.viewers.ISelection;
 //import org.eclipse.jface.viewers.IStructuredSelection;
+import java.util.ArrayList;
+
 import org.eclipse.ui.part.*;
 
 import edu.uta.cse.util.Constant;
 import edu.uta.cse.views.*;
 import touchdevelopplugin.editors.*;
 
-public class TypeStrategy{// extends CodeHandlerStrategy {
+public class TypeStrategy extends CodeHandlerStrategy {
 
-	private static String[] FieldType=new String[4];
+	private static ArrayList<String> FieldType=new ArrayList<String>();
 	//@Override
-	public static void doAnalysis() {
+	public void doAnalysis() {
 		// TODO Auto-generated method stub
 
 		JAVAEditor jve = new JAVAEditor();
 		//StringBuffer theWord= jve.getJavaConfiguration().getDoubleClickStrategy().getSelectedWord();
 		StringBuffer theWord = JAVADoubleClickStrategy.SelectedWord;
 		if (theWord.toString().equals("void") ){
-			getFieldType()[0]="int";
-			getFieldType()[1]="String";
-			getFieldType()[2]="double";
-			getFieldType()[3]="float";
+			FieldType.clear();
+			FieldType.add("int");
+			FieldType.add("String");
+			FieldType.add("double");
+			FieldType.add("float");
 
-		}else{
-			getFieldType()[0]="123";
-			getFieldType()[1]="";
-			getFieldType()[2]="";
-			getFieldType()[3]="";
+		}else if(theWord.toString().equals("String")){
+			FieldType.clear();
+			FieldType.add("int");
+			FieldType.add("void");
+			FieldType.add("double");
+			FieldType.add("float");
+		}else if(theWord.toString().equals("int")){
+			FieldType.clear();
+			FieldType.add("String");
+			FieldType.add("void");
+			FieldType.add("double");
+			FieldType.add("float");
+		}else if(theWord.toString().equals("float")){
+			FieldType.clear();
+			FieldType.add("String");
+			FieldType.add("void");
+			FieldType.add("double");
+			FieldType.add("int");
+		}else if(theWord.toString().equals("doube")){
+			FieldType.clear();
+			FieldType.add("String");
+			FieldType.add("void");
+			FieldType.add("int");
+			FieldType.add("float");
 		}
-
 	}
-	public static String[] getFieldType() {
+	public static ArrayList<String> getFieldType() {
 		return FieldType;
 	}
-	public static void setFieldType(String[] fieldType) {
+	public static void setFieldType(ArrayList<String> fieldType) {
 		FieldType = fieldType;
 	}
 	public void setListener(Object object) {

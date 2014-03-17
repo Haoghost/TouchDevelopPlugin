@@ -18,7 +18,7 @@ public class ViewContentProvider implements IStructuredContentProvider,
    
    public Object[] getElements(Object inputElement) {
 		        //return Constant.basicFieldType;
-	   			  return TypeStrategy.getFieldType();
+	   			  return TypeStrategy.getFieldType().toArray();
 		    }
 		
 		    public void dispose() {

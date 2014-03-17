@@ -63,7 +63,8 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 		/**
 		 * Here to call the method to analysis the selected word and then refresh the view window
 		 */
-		TypeStrategy.doAnalysis();
+		TypeStrategy typeS = new TypeStrategy();
+		typeS.doAnalysis();
 		ButtonsView.setview();
 
 	}
