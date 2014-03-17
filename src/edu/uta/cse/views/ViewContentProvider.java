@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Listener;
 import edu.uta.cse.main.TypeStrategy;
 import edu.uta.cse.util.Constant;
 
-public class aaa implements IStructuredContentProvider,
+public class ViewContentProvider implements IStructuredContentProvider,
 
 	Listener {
 

@@ -60,21 +60,6 @@ public class ButtonsView extends ViewPart {
 	 * it and always show the same content 
 	 * (like Task List, for example).
 	 */
-	 
-	class ViewContentProvider implements IStructuredContentProvider {
-		public String[] displayStr={};
-		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-		}
-		public void dispose() {
-		}
-		public Object[] getElements(Object parent) {
-			//TypeStrategy.getFieldType();
-			return  displayStr;
-			//return new String[] { "void", "int", "string" };
-			
-		}
-
-	}
 	
 	
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -104,15 +89,11 @@ public class ButtonsView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		//viewer.setContentProvider(new ViewContentProvider());
+		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		//viewer.setInput(getViewSite());
 		//viewer.setInput(null);
-		
-		viewer.setContentProvider(new aaa());
-		//viewer.setLabelProvider(new PersonLabelProvider());
-		//viewer.setInput(new Constant());
 		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "TouchDevelopPlugin.viewer");
@@ -122,7 +103,9 @@ public class ButtonsView extends ViewPart {
 		contributeToActionBars();
 	}
 
-
+	/**
+	 * This method to refresh the view
+	 * */
 	public static void setview(){
 		viewer.setInput(new TypeStrategy());
 	}

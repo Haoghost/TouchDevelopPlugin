@@ -60,9 +60,11 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 			selectWord(pos);
 		}
 		System.out.println(SelectedWord);
+		/**
+		 * Here to call the method to analysis the selected word and then refresh the view window
+		 */
 		TypeStrategy.doAnalysis();
 		ButtonsView.setview();
-		//ButtonsView.viewer.setContentProvider(ButtonsView.viewer.getContentProvider());
 
 	}
 	protected boolean selectComment(int caretPos) {
