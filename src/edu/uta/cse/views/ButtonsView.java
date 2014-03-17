@@ -2,6 +2,7 @@ package edu.uta.cse.views;
 
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IDocument;
@@ -14,7 +15,10 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import edu.uta.cse.main.TypeStrategy;
+import edu.uta.cse.util.Constant;
 import touchdevelopplugin.editors.JAVAEditor;
+
 
 
 /**
@@ -42,7 +46,7 @@ public class ButtonsView extends ViewPart {
 	 */
 	public static final String ID = "edu.uta.cse.views.ButtonsView";
 
-	private TableViewer viewer;
+	public static TableViewer viewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
@@ -58,14 +62,21 @@ public class ButtonsView extends ViewPart {
 	 */
 	 
 	class ViewContentProvider implements IStructuredContentProvider {
+		public String[] displayStr={};
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			return new String[] { "void", "int", "string" };
+			//TypeStrategy.getFieldType();
+			return  displayStr;
+			//return new String[] { "void", "int", "string" };
+			
 		}
+
 	}
+	
+	
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
@@ -93,17 +104,27 @@ public class ButtonsView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new ViewContentProvider());
+		//viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
-		viewer.setInput(getViewSite());
-
+		//viewer.setInput(getViewSite());
+		//viewer.setInput(null);
+		
+		viewer.setContentProvider(new aaa());
+		//viewer.setLabelProvider(new PersonLabelProvider());
+		//viewer.setInput(new Constant());
+		
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "TouchDevelopPlugin.viewer");
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+	}
+
+
+	public static void setview(){
+		viewer.setInput(new TypeStrategy());
 	}
 
 	private void hookContextMenu() {
@@ -191,9 +212,10 @@ public class ButtonsView extends ViewPart {
 		    
 		    public void doubleClick(DoubleClickEvent event) {
 		    	this.repalceMethodName("String");
+		    	
 		    }
 		    private void repalceMethodName(String s){
-				ISelection selection = viewer.getSelection();
+				 ISelection selection = viewer.getSelection();
 			     Object obj = ((IStructuredSelection)selection).getFirstElement();
 			     JAVAEditor view = (JAVAEditor)getSite().getPage().getActiveEditor();
 			     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
@@ -209,10 +231,8 @@ public class ButtonsView extends ViewPart {
 				 int length = s.length();
 				 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
 			}
-		   });
-		    
-		    
-		    
+
+		   });		    
 		   
 	}
 	

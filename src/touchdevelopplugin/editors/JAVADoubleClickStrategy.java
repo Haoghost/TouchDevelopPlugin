@@ -3,18 +3,24 @@ package touchdevelopplugin.editors;
 import javax.swing.JDialog;
 
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.dialogs.ViewContentProvider;
 
-import edu.uta.cse.main.CodeFileReader;
-import edu.uta.cse.test.DialogTest;
+import edu.uta.cse.main.TypeStrategy;
+import edu.uta.cse.views.ButtonsView;
+
+
+
 
 public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 	public static int StartCursor;
 	public static int EndCursor;
-	// For test. Joe
-	CodeFileReader mCodeFileReader = new CodeFileReader();
-	DialogTest dlgTest = new DialogTest();
-	////////////////////////////////////////////////////////
+	public static StringBuffer SelectedWord;
+	
 	public int getStartCursor() {
 		return StartCursor;
 	}
@@ -27,6 +33,13 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	public void setEndCursor(int endCursor) {
 		EndCursor = endCursor;
 	}
+	public StringBuffer getSelectedWord(){
+		return SelectedWord;
+	}
+	public void setSelectedWord(StringBuffer selectedword) {
+		SelectedWord = selectedword;
+	}
+
 
 	public ITextViewer getfText() {
 		return fText;
@@ -34,24 +47,23 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	public void setfText(ITextViewer fText) {
 		this.fText = fText;
 	}
+	
+	
 	public void doubleClicked(ITextViewer part) {
 		int pos = part.getSelectedRange().x;
-		
 		if (pos < 0)
 			return;
 
 		fText = part;
-		try {
-			mCodeFileReader.setContent(fText.getDocument().get());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		if (!selectComment(pos)) {
 			selectWord(pos);
-			// TODO: For test.
-			dlgTest.setVisible(true);
 		}
+		System.out.println(SelectedWord);
+		TypeStrategy.doAnalysis();
+		ButtonsView.setview();
+		//ButtonsView.viewer.setContentProvider(ButtonsView.viewer.getContentProvider());
+
 	}
 	protected boolean selectComment(int caretPos) {
 		IDocument doc = fText.getDocument();
@@ -106,13 +118,13 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	system.out.print
 	
 	*/
-	private void print(String selectedWord){
-		System.out.print(selectedWord);
-	}
+//	private void print(String selectedWord){
+//		System.out.print(selectedWord);
+//	}
 	protected boolean selectWord(int caretPos) {
 		StringBuffer sb = new StringBuffer("");
+
 		IDocument doc = fText.getDocument();
-		
 		int startPos, endPos;
 
 		try {
@@ -142,13 +154,8 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 			for(int i=0; i<endPos-startPos-1;i++){
 				sb.append(doc.getChar(startPos+1+i));
 			}
-			
-			System.out.println(sb);
-			
-			//TODO: For test. Joe
-			dlgTest.setOldType(sb.toString());
-			//dlgTest.setNewTypes(mCodeFileReader.getMethodReturnType(sb.toString()));
-			////////////////////////////////////////
+			this.setSelectedWord(sb);
+			//System.out.println(sb);
 			return true;
 
 		} catch (BadLocationException x) {
