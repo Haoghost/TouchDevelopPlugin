@@ -2,11 +2,16 @@ package edu.uta.cse.views;
 
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -15,10 +20,8 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
-import edu.uta.cse.main.TypeStrategy;
-import edu.uta.cse.util.Constant;
+import touchdevelopplugin.editors.JAVADoubleClickStrategy;
 import touchdevelopplugin.editors.JAVAEditor;
-
 
 
 /**
@@ -45,11 +48,10 @@ public class ButtonsView extends ViewPart {
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "edu.uta.cse.views.ButtonsView";
-
-	public static TableViewer viewer;
+	public static String[] buttonText = {"Start to analysis"};
+	private TableViewer viewer;
 	private Action action1;
 	private Action action2;
-	private Action doubleClickAction;
 
 	/*
 	 * The content provider class is responsible for
@@ -60,8 +62,16 @@ public class ButtonsView extends ViewPart {
 	 * it and always show the same content 
 	 * (like Task List, for example).
 	 */
-	
-	
+	 
+	class ViewContentProvider implements IStructuredContentProvider {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+		public void dispose() {
+		}
+		public Object[] getElements(Object parent) {
+			return ButtonsView.buttonText;
+		}
+	}
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
@@ -92,22 +102,14 @@ public class ButtonsView extends ViewPart {
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
-		//viewer.setInput(getViewSite());
-		//viewer.setInput(null);
-		
+		viewer.setInput(getViewSite());
+
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "TouchDevelopPlugin.viewer");
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-	}
-
-	/**
-	 * This method to refresh the view
-	 * */
-	public static void setview(){
-		viewer.setInput(new TypeStrategy());
 	}
 
 	private void hookContextMenu() {
@@ -122,7 +124,7 @@ public class ButtonsView extends ViewPart {
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-
+	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
@@ -167,56 +169,135 @@ public class ButtonsView extends ViewPart {
 		action2.setToolTipText("Action 2 tooltip");
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
-				
-				//=================show message================
-				
-				
-				
-				
-				
-				
-				
-				
-				//=================show message================
-				
-				
-				
+	}
+	public class IProperty implements IPropertyListener{
+		private ButtonsView view;
+		public IProperty(ButtonsView view){
+			this.view = view;
+		}
+		@Override
+		public void propertyChanged(Object arg0, int arg1) {
+			// TODO Auto-generated method stub
+			ButtonsView.buttonText = new String[]{"int","String","char"};
+			view.viewer.setContentProvider(view.viewer.getContentProvider());
+		}
+	   	 
+    }
+	class ISelectionChange implements ISelectionChangedListener {
+		JAVAEditor editor;
+		ButtonsView view;
+		public String getSelectedStringFormEditor(JAVAEditor editor){
+			StringBuffer sb = new StringBuffer("");
+			ITextViewer itv = editor.getJavaConfiguration().getDoubleClickStrategy().getfText();
+			int caretPos = itv.getSelectedRange().x;
+			char c;
+			int startPos, endPos;
+			IDocument doc = itv.getDocument();
+			
+			int pos = caretPos;
+			
+			try {
+				while (pos >= 0) {
+					c = doc.getChar(pos);
+					if (!Character.isJavaIdentifierPart(c))
+						break;
+					--pos;
+				}
+				startPos = pos;
+				pos = caretPos;
+				int length = doc.getLength();
+
+				while (pos < length) {
+					c = doc.getChar(pos);
+					if (!Character.isJavaIdentifierPart(c))
+						break;
+					++pos;
+				}
+				endPos = pos;
+				for(int i=0; i<endPos-startPos-1;i++){
+					sb.append(doc.getChar(startPos+1+i));
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
-		};
+			return sb.toString();
+		}
+
+		public ISelectionChange(JAVAEditor editor,ButtonsView view){
+			this.editor = editor;
+			this.view = view;
+		}
+		@Override
+		public void selectionChanged(SelectionChangedEvent arg0) {
+			// TODO Auto-generated method stub
+			
+			/**
+			 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
+			 */
+			
+			String s = this.getSelectedStringFormEditor(editor);
+			ButtonsView.buttonText = new String[]{s};
+			view.viewer.setContentProvider(view.viewer.getContentProvider());
+		}
 	}
 
-	private void hookDoubleClickAction() {
-		    viewer.addDoubleClickListener(new IDoubleClickListener() {
-		    
-		    public void doubleClick(DoubleClickEvent event) {
-		    	this.repalceMethodName("String");
-		    	
-		    }
-		    private void repalceMethodName(String s){
-				 ISelection selection = viewer.getSelection();
-			     Object obj = ((IStructuredSelection)selection).getFirstElement();
-			     JAVAEditor view = (JAVAEditor)getSite().getPage().getActiveEditor();
-			     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
-			     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor();
-			     IDocument doc =  view.getJavaConfiguration().getDoubleClickStrategy().getfText().getDocument();
-			     String content = doc.get();
-			     StringBuffer sb = new StringBuffer("");
-			     sb.append(content.substring(0,start+1));
-			     sb.append(s);
-			     sb.append(content.substring(end, content.length()));
-			     doc.set(sb.toString());
-			     int offset = start + 1;
-				 int length = s.length();
-				 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
-			}
+	class IDoubleClick implements IDoubleClickListener{
 
-		   });		    
-		   
+	    ButtonsView view;
+	    public IDoubleClick(ButtonsView view){
+	    	this.view = view;
+	    }
+	    
+	    public void doubleClick(DoubleClickEvent event) {
+	    	JAVAEditor editor =(JAVAEditor)getSite().getPage().getActiveEditor();
+	    	if(editor.getJavaConfiguration().getDoubleClickStrategy().getfText()!=null){
+		     try {
+				editor.addPropertyListener(new IProperty(this.view));
+				editor.getJavaConfiguration().getDoubleClickStrategy().getfText().addTextListener(new ITextListener() {
+					
+					@Override
+					public void textChanged(TextEvent arg0) {
+						// TODO Auto-generated method stub
+						
+						/**
+						 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
+						 */
+						
+						ButtonsView.buttonText = new String[]{"textChanged","String","char","char"};
+						view.viewer.setContentProvider(view.viewer.getContentProvider());
+					}
+				});
+				editor.getJavaConfiguration().getDoubleClickStrategy().getfText().getSelectionProvider().addSelectionChangedListener(new ISelectionChange(editor,view));
+			
+				
+		     } catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		     this.repalceMethodName("String");
+		 }
+		     
+	    }
+	    private void repalceMethodName(String s){
+		     JAVAEditor view = (JAVAEditor)getSite().getPage().getActiveEditor();
+		     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
+		     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor();
+		     IDocument doc =  view.getJavaConfiguration().getDoubleClickStrategy().getfText().getDocument();
+		     String content = doc.get();
+		     StringBuffer sb = new StringBuffer("");
+		     sb.append(content.substring(0,start+1));
+		     sb.append(s);
+		     sb.append(content.substring(end, content.length()));
+		     doc.set(sb.toString());
+		     int offset = start + 1;
+			 int length = s.length();
+			 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
+		}
+	   
+	}
+	private void hookDoubleClickAction() {
+		    viewer.addDoubleClickListener(new IDoubleClick(this));
 	}
 	
 	private void showMessage(String message) {
