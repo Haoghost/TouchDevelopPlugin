@@ -10,6 +10,7 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 	public  int startCursor;
 	public  int endCursor;
+	public static StringBuffer SelectedWord;
 	public int getStartCursor() {
 		return startCursor;
 	}
@@ -134,7 +135,7 @@ public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
 //			ButtonsView.buttonText = new String[]{"int","String","char"};
 			
 			System.out.println(sb);
-			
+			SelectedWord = sb;
 			
 			return true;
 
