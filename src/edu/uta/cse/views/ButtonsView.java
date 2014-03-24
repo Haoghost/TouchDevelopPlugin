@@ -295,7 +295,7 @@ public class ButtonsView extends ViewPart {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		     this.repalceMethodName("String");
+		     this.repalceMethodName(event.getSelection().toString().substring(1,event.getSelection().toString().length()-1));
 		 }
 		     
 	    }
