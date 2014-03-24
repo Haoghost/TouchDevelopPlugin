@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 import edu.uta.cse.main.CodeFileReader;
-
+import edu.uta.cse.main.TypeStrategy;
 import touchdevelopplugin.editors.TDPDoubleClickStrategy;
 import touchdevelopplugin.editors.TDPEditor;
 
@@ -243,18 +243,17 @@ public class ButtonsView extends ViewPart {
 			/**
 			 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
 			 */
+			TypeStrategy ts = new TypeStrategy();
+			
 			String context = editor.getJavaConfiguration()
 					.getDoubleClickStrategy().getfText().getDocument().get();
 		
 			if (codeFileReader != null) {
 				codeFileReader.setContent(context);
 				String s = this.getSelectedStringFormEditor(editor);
-				List<String> result = codeFileReader.getMethodReturnType(s);
-				String[] btnText = new String[result.size()];
-				for (int i = 0; i < result.size(); i++) {
-					btnText[i] = result.get(i);
-				}
-				ButtonsView.buttonText = btnText;
+
+				
+				ButtonsView.buttonText = ts.doAnalysis(codeFileReader, context, s);
 			} else {
 				ButtonsView.buttonText = new String[] { "codeFileReader is null" };
 			}

@@ -3,6 +3,7 @@ package edu.uta.cse.main;
 //import org.eclipse.jface.viewers.ISelection;
 //import org.eclipse.jface.viewers.IStructuredSelection;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.ui.part.*;
 
@@ -12,56 +13,20 @@ import touchdevelopplugin.editors.*;
 
 public class TypeStrategy extends CodeHandlerStrategy {
 
-	private static ArrayList<String> FieldType=new ArrayList<String>();
-	//@Override
-	public void doAnalysis() {
+	@Override
+	public String[] doAnalysis(CodeFileReader cfr, String contex,
+			String selectedWord) {
+		List<String> allTypes = cfr.getMethodReturnType(selectedWord);
+		if (allTypes.contains(selectedWord))
+			allTypes.remove(selectedWord);
+		if(allTypes.contains("null"))
+			allTypes.remove("null");
 		// TODO Auto-generated method stub
-
-		TDPEditor jve = new TDPEditor();
-		//StringBuffer theWord= jve.getJavaConfiguration().getDoubleClickStrategy().getSelectedWord();
-		StringBuffer theWord = TDPDoubleClickStrategy.SelectedWord;
-		if (theWord.toString().equals("void") ){
-			FieldType.clear();
-			FieldType.add("int");
-			FieldType.add("String");
-			FieldType.add("double");
-			FieldType.add("float");
-
-		}else if(theWord.toString().equals("String")){
-			FieldType.clear();
-			FieldType.add("int");
-			FieldType.add("void");
-			FieldType.add("double");
-			FieldType.add("float");
-		}else if(theWord.toString().equals("int")){
-			FieldType.clear();
-			FieldType.add("String");
-			FieldType.add("void");
-			FieldType.add("double");
-			FieldType.add("float");
-		}else if(theWord.toString().equals("float")){
-			FieldType.clear();
-			FieldType.add("String");
-			FieldType.add("void");
-			FieldType.add("double");
-			FieldType.add("int");
-		}else if(theWord.toString().equals("doube")){
-			FieldType.clear();
-			FieldType.add("String");
-			FieldType.add("void");
-			FieldType.add("int");
-			FieldType.add("float");
+		String[] buttontext = new String[allTypes.size()] ;
+		for (int i = 0; i < allTypes.size(); i++) {
+			buttontext[i] = allTypes.get(i);
 		}
-	}
-	public static ArrayList<String> getFieldType() {
-		return FieldType;
-	}
-	public static void setFieldType(ArrayList<String> fieldType) {
-		FieldType = fieldType;
-	}
-	public void setListener(Object object) {
-		// TODO Auto-generated method stub
-		
+		return buttontext;
 	}
 
 }
