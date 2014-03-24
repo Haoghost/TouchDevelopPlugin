@@ -9,5 +9,5 @@ public abstract class CodeHandlerStrategy {
 		this.analysisString = analysisString;
 		this.contextViewer = contextViewer;
 	}
-	public abstract String[] doAnalysis();
+	public abstract String[] doAnalysis(String selectedWord, String contex);
 }
