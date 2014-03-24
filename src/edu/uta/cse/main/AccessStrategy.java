@@ -3,9 +3,9 @@ package edu.uta.cse.main;
 public class AccessStrategy extends CodeHandlerStrategy{
 
 	@Override
-	public void doAnalysis() {
+	public String[] doAnalysis() {
 		// TODO Auto-generated method stub
-		
+		return "".split("");
 	}
 
 }
