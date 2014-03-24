@@ -102,8 +102,8 @@ public class CodeFileReader {
 				returnTypes.add(modify.toString());
 		}
 		// Remove the original return type.
-	    if(returnTypes.contains(returnTypeToBeModified))
-	    	returnTypes.remove(returnTypeToBeModified);
+//	    if(returnTypes.contains(returnTypeToBeModified))
+//	    	returnTypes.remove(returnTypeToBeModified);
 		return returnTypes;
 	}
 }
