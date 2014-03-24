@@ -1,6 +1,6 @@
 package edu.uta.cse.main;
 
-public class ParameterStrategy extends CodeHandlerStrategy{
+public class VariableStrategy extends CodeHandlerStrategy{
 
 	@Override
 	public void doAnalysis() {
