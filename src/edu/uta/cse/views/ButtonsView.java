@@ -26,8 +26,8 @@ import org.eclipse.swt.SWT;
 
 import edu.uta.cse.main.CodeFileReader;
 
-import touchdevelopplugin.editors.JAVADoubleClickStrategy;
-import touchdevelopplugin.editors.JAVAEditor;
+import touchdevelopplugin.editors.TDPDoubleClickStrategy;
+import touchdevelopplugin.editors.TDPEditor;
 
 
 /**
@@ -192,9 +192,9 @@ public class ButtonsView extends ViewPart {
 	   	 
     }
 	class ISelectionChange implements ISelectionChangedListener {
-		JAVAEditor editor;
+		TDPEditor editor;
 		ButtonsView view;
-		public String getSelectedStringFormEditor(JAVAEditor editor){
+		public String getSelectedStringFormEditor(TDPEditor editor){
 			StringBuffer sb = new StringBuffer("");
 			ITextViewer itv = editor.getJavaConfiguration().getDoubleClickStrategy().getfText();
 			int caretPos = itv.getSelectedRange().x;
@@ -232,7 +232,7 @@ public class ButtonsView extends ViewPart {
 			return sb.toString();
 		}
 
-		public ISelectionChange(JAVAEditor editor,ButtonsView view){
+		public ISelectionChange(TDPEditor editor,ButtonsView view){
 			this.editor = editor;
 			this.view = view;
 		}
@@ -271,7 +271,7 @@ public class ButtonsView extends ViewPart {
 	    }
 	    
 	    public void doubleClick(DoubleClickEvent event) {
-	    	JAVAEditor editor =(JAVAEditor)getSite().getPage().getActiveEditor();
+	    	TDPEditor editor =(TDPEditor)getSite().getPage().getActiveEditor();
 	    	if(editor.getJavaConfiguration().getDoubleClickStrategy().getfText()!=null){
 		     try {
 				editor.addPropertyListener(new IProperty(this.view));
@@ -301,7 +301,7 @@ public class ButtonsView extends ViewPart {
 		     
 	    }
 	    private void repalceMethodName(String s){
-		     JAVAEditor view = (JAVAEditor)getSite().getPage().getActiveEditor();
+		     TDPEditor view = (TDPEditor)getSite().getPage().getActiveEditor();
 		     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
 		     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor();
 		     IDocument doc =  view.getJavaConfiguration().getDoubleClickStrategy().getfText().getDocument();

@@ -6,7 +6,7 @@ import org.eclipse.jface.text.*;
 
 import edu.uta.cse.views.ButtonsView;
 
-public class JAVADoubleClickStrategy implements ITextDoubleClickStrategy {
+public class TDPDoubleClickStrategy implements ITextDoubleClickStrategy {
 	protected ITextViewer fText;
 	public  int startCursor;
 	public  int endCursor;

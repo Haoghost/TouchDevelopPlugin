@@ -17,9 +17,9 @@ public class TypeStrategy extends CodeHandlerStrategy {
 	public void doAnalysis() {
 		// TODO Auto-generated method stub
 
-		JAVAEditor jve = new JAVAEditor();
+		TDPEditor jve = new TDPEditor();
 		//StringBuffer theWord= jve.getJavaConfiguration().getDoubleClickStrategy().getSelectedWord();
-		StringBuffer theWord = JAVADoubleClickStrategy.SelectedWord;
+		StringBuffer theWord = TDPDoubleClickStrategy.SelectedWord;
 		if (theWord.toString().equals("void") ){
 			FieldType.clear();
 			FieldType.add("int");

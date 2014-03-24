@@ -2,9 +2,9 @@ package touchdevelopplugin.editors;
 
 import org.eclipse.jface.text.rules.*;
 
-public class TagRule extends MultiLineRule {
+public class TDPTagRule extends MultiLineRule {
 
-	public TagRule(IToken token) {
+	public TDPTagRule(IToken token) {
 		super("<", ">", token);
 	}
 	protected boolean sequenceDetected(

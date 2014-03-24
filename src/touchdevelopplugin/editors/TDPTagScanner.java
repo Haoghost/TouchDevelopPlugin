@@ -3,12 +3,12 @@ package touchdevelopplugin.editors;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
 
-public class JAVATagScanner extends RuleBasedScanner {
+public class TDPTagScanner extends RuleBasedScanner {
 
-	public JAVATagScanner(ColorManager manager) {
+	public TDPTagScanner(TDPColorManager manager) {
 		IToken string =
 			new Token(
-				new TextAttribute(manager.getColor(IJAVAColorConstants.STRING)));
+				new TextAttribute(manager.getColor(TDPColorConstants.STRING)));
 
 		IRule[] rules = new IRule[3];
 
@@ -17,7 +17,7 @@ public class JAVATagScanner extends RuleBasedScanner {
 		// Add a rule for single quotes
 		rules[1] = new SingleLineRule("'", "'", string, '\\');
 		// Add generic whitespace rule.
-		rules[2] = new WhitespaceRule(new JAVAWhitespaceDetector());
+		rules[2] = new WhitespaceRule(new TDPWhitespaceDetector());
 
 		setRules(rules);
 	}
