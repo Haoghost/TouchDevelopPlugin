@@ -1,9 +1,13 @@
 package edu.uta.cse.views;
 
 
+import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITextInputListener;
@@ -19,6 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
+
+import edu.uta.cse.main.CodeFileReader;
 
 import touchdevelopplugin.editors.JAVADoubleClickStrategy;
 import touchdevelopplugin.editors.JAVAEditor;
@@ -52,7 +58,7 @@ public class ButtonsView extends ViewPart {
 	private TableViewer viewer;
 	private Action action1;
 	private Action action2;
-
+	private CodeFileReader codeFileReader;
 	/*
 	 * The content provider class is responsible for
 	 * providing objects to the view. It can wrap
@@ -91,6 +97,8 @@ public class ButtonsView extends ViewPart {
 	 * The constructor.
 	 */
 	public ButtonsView() {
+		//ASTParser parser = ASTParser.newParser(AST.JLS4);
+		codeFileReader = new CodeFileReader();
 	}
 
 	/**
@@ -235,9 +243,22 @@ public class ButtonsView extends ViewPart {
 			/**
 			 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
 			 */
+			String context = editor.getJavaConfiguration()
+					.getDoubleClickStrategy().getfText().getDocument().get();
+		
+			if (codeFileReader != null) {
+				codeFileReader.setContent(context);
+				String s = this.getSelectedStringFormEditor(editor);
+				List<String> result = codeFileReader.getMethodReturnType(s);
+				String[] btnText = new String[result.size()];
+				for (int i = 0; i < result.size(); i++) {
+					btnText[i] = result.get(i);
+				}
+				ButtonsView.buttonText = btnText;
+			} else {
+				ButtonsView.buttonText = new String[] { "codeFileReader is null" };
+			}
 			
-			String s = this.getSelectedStringFormEditor(editor);
-			ButtonsView.buttonText = new String[]{s};
 			view.viewer.setContentProvider(view.viewer.getContentProvider());
 		}
 	}
@@ -312,5 +333,9 @@ public class ButtonsView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	class ParseThread extends Thread{
+		
 	}
 }

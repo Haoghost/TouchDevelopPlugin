@@ -25,7 +25,7 @@ import edu.uta.cse.util.*;
  */
 public class CodeFileReader {
 	
-	
+	private ASTParser parser;
 	/**
 	 * The parse result. CompilationUnit means the root.
 	 */
@@ -39,7 +39,7 @@ public class CodeFileReader {
 	public void setContent(String content) {
 		this.content = content;
 		// Create AST parser.  		
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		//ASTParser parser = ASTParser.newParser(AST.JLS4);
 	    // Set the source code character of parser.  
 	    parser.setSource(content.toCharArray()); 
 	    // Parse and get the AST context result.
@@ -47,7 +47,8 @@ public class CodeFileReader {
 	}
 	
 	public CodeFileReader(){
-		
+		// Create AST parser.  		
+	    parser = ASTParser.newParser(AST.JLS4);
 	}
 	/**
 	 * 	Constructor
@@ -78,6 +79,8 @@ public class CodeFileReader {
 	
 		// Get types.
 		List types = result.types();
+		if(types.size() == 0)
+			return returnTypes;
 		// Get type declaration.  
 		TypeDeclaration typeDec = (TypeDeclaration) types.get(0);
 		// Get field declaration list. 

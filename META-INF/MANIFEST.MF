@@ -11,3 +11,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/org.eclipse.jdt.core_3.8.3.v20130121-145325.jar,
+ lib/org.eclipse.core.resources_3.8.1.v20121114-124432.jar,
+ lib/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar,
+ lib/org.eclipse.core.jobs_3.5.300.v20120912-155018.jar,
+ lib/org.eclipse.core.runtime_3.8.0.v20120912-155025.jar,
+ lib/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar,
+ lib/org.eclipse.equinox.preferences_3.5.1.v20121031-182809.jar,
+ lib/org.eclipse.osgi_3.8.2.v20130124-134944.jar,
+ .
+Import-Package: org.eclipse.core.resources,
+ org.eclipse.jdt.core
