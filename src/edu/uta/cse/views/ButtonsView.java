@@ -24,8 +24,8 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
-import edu.uta.cse.main.CodeExtractor;
-import edu.uta.cse.main.TypeStrategy;
+import edu.uta.cse.stategy.CodeExtractor;
+import edu.uta.cse.stategy.TypeStrategy;
 import touchdevelopplugin.editors.TDPDoubleClickStrategy;
 import touchdevelopplugin.editors.TDPEditor;
 

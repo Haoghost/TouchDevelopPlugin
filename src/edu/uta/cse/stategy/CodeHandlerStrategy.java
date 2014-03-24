@@ -1,4 +1,4 @@
-package edu.uta.cse.main;
+package edu.uta.cse.stategy;
 
 import org.eclipse.jface.text.ITextViewer;
 
