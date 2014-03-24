@@ -5,11 +5,11 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="JAVA Editor"
+            name="TDP Editor"
             extensions="java"
             icon="icons/sample.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            class="touchdevelopplugin.editors.JAVAEditor"
+            class="touchdevelopplugin.editors.TDPEditor"
             id="touchdevelopplugin.editors.JAVAEditor">
       </editor>
    </extension>
