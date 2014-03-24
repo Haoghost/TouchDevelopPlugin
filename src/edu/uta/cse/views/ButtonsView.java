@@ -24,7 +24,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
-import edu.uta.cse.main.CodeFileReader;
+import edu.uta.cse.main.CodeExtractor;
 import edu.uta.cse.main.TypeStrategy;
 import touchdevelopplugin.editors.TDPDoubleClickStrategy;
 import touchdevelopplugin.editors.TDPEditor;
@@ -58,7 +58,7 @@ public class ButtonsView extends ViewPart {
 	private TableViewer viewer;
 	private Action action1;
 	private Action action2;
-	private CodeFileReader codeFileReader;
+	private CodeExtractor codeFileReader;
 	/*
 	 * The content provider class is responsible for
 	 * providing objects to the view. It can wrap
@@ -98,7 +98,7 @@ public class ButtonsView extends ViewPart {
 	 */
 	public ButtonsView() {
 		//ASTParser parser = ASTParser.newParser(AST.JLS4);
-		codeFileReader = new CodeFileReader();
+		codeFileReader = new CodeExtractor();
 	}
 
 	/**

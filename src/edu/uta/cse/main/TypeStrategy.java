@@ -14,7 +14,7 @@ import touchdevelopplugin.editors.*;
 public class TypeStrategy extends CodeHandlerStrategy {
 
 	@Override
-	public String[] doAnalysis(CodeFileReader cfr, String contex,
+	public String[] doAnalysis(CodeExtractor cfr, String contex,
 			String selectedWord) {
 		List<String> allTypes = cfr.getMethodReturnType(selectedWord);
 		if (allTypes.contains(selectedWord))

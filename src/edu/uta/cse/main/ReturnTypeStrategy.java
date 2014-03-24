@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ReturnTypeStrategy  extends CodeHandlerStrategy{
 
-public String[] doAnalysis(CodeFileReader cfr, String contex,String selectedWord) {
+public String[] doAnalysis(CodeExtractor cfr, String contex,String selectedWord) {
 	
 	List<String> allTypes = cfr.getMethodReturnType(selectedWord);
 	if (allTypes.contains(selectedWord))
