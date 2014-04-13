@@ -200,4 +200,41 @@ public class CodeExtractor {
 		return variables;
 	}
 	
+	/**
+	 * Get all local fields (local variables) including the global fields.
+	 * @param methodName
+	 * Target method name.
+	 * @return
+	 * Fields (local variables) names.
+	 */
+	public List<String> getLocalFields(final String methodName) {
+		final List<String> fields = getGlobalFields();
+		// Visitor pattern.
+		result.accept(new ASTVisitor() {
+			// Find target method.
+			public boolean visit(MethodDeclaration node){
+				SimpleName name = node.getName();
+				if(name.toString().compareTo(methodName) == 0){
+					List<SingleVariableDeclaration> parameters = node.parameters();
+					for(SingleVariableDeclaration parameter:parameters){
+						// Add parameters to list.
+							fields.add(parameter.getName().toString());
+					}
+					
+					node.accept(new ASTVisitor(){
+						// Find variables declared within the method.
+						public boolean visit(VariableDeclarationFragment node){
+							SimpleName name = node.getName();
+							if (!fields.contains(name.toString())) {
+								fields.add(name.toString());
+							}
+							return false;
+						}
+					});
+				}
+				return true;
+			}// End outside visit.
+		});
+		return fields;
+	}// End getAllFields.
 }
