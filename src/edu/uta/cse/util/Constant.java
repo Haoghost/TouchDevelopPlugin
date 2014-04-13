@@ -14,9 +14,8 @@ public class Constant {
 		"String",
 		"float",
 		"double",
-		"Class",
-		"null",
-		"String[]",
+		"boolean",
+		"char",
 		"List",
 		"ArrayList"};
 

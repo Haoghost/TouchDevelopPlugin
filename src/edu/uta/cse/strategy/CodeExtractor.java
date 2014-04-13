@@ -1,14 +1,18 @@
 package edu.uta.cse.strategy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -21,9 +25,12 @@ import edu.uta.cse.util.*;
  * Input: The content of java source file using String format.
  * 
  * @author Hui Zhou
- * @version 1.1
+ * @version 2.0
  * @since 3-14-2014
+ * Update: 4-13-2014
  * @see http://blog.csdn.net/flying881114/article/details/6187725
+ *  http://www.eclipse.org/articles/article.php?file=Article-JavaCodeManipulation_AST/index.html
+ * 
  */
 public class CodeExtractor {
 	
@@ -109,8 +116,8 @@ public class CodeExtractor {
 	}
 	
 	/**
-	 * @since 3-24-2014
 	 * Get global variables.
+	 * @since 3-24-2014
 	 * @return
 	 *  The names of global variables.
 	 */
@@ -129,54 +136,68 @@ public class CodeExtractor {
 			for (Object obj : fieldDecEle.fragments()) {
 				VariableDeclarationFragment frag = (VariableDeclarationFragment) obj;
 				globalFields.add(frag.getName().toString());
-				System.out.println("[FIELD_NAME:]" + frag.getName().toString());
+				System.out.println("[FIELD_NAME:]" + frag.getName().toString());// For debug
 			}
 		}
 		return globalFields;
 	}
 	/**
+	 *  Get all method parameters.
 	 * @since 3-24-2014
-	 * Get local variables.
-	 * @param methodName
-	 *  The method to be searched.
-	 * @param type
-	 *  Variable type to get.
+	 *	Update: 4-13-2014
 	 * @return
-	 *  The names of local variables.
+	 *  The names of all method parameters.
 	 */
-	public List<String> getLocalFields(String methodName, String type){
-		List<String> localFields = new ArrayList<String>();
+	public List<String> getAllMethodParameters(){
+		List<String> methodParameters = new ArrayList<String>();
+		
+		// Record the site of target method.
 		int iterator;
 		Boolean exist = false;
-		// Get types.
+		
+		// Get types. This 'type' is not something like 'void', 'int', 'boolean'...
 		List types = result.types();
+		
 		if (types.size() == 0)
-			return localFields;
+			return methodParameters;
+		
 		// Get type declaration.
 		TypeDeclaration typeDec = (TypeDeclaration) types.get(0);
 		// Get methods' names.
 		MethodDeclaration methodDec[] = typeDec.getMethods();
-		for (iterator = 0; iterator < methodDec.length; iterator++) {
-			// If current context doesn't contain target method, then return "".
-			if(methodName.compareTo(methodDec[iterator].getName().toString()) == 0){
-				exist = true;
-				break;
+		
+		for (MethodDeclaration method: methodDec) {
+			List<SingleVariableDeclaration> parameters = method.parameters();
+			for(SingleVariableDeclaration parameter:parameters){
+				// Add parameters to method parameter list.
+				if(!methodParameters.contains(parameter.getName().toString()))
+					methodParameters.add(parameter.getName().toString());
 			}
 		}
 		
-		if(exist){
-			List<SingleVariableDeclaration> parameters = methodDec[iterator].parameters();
-			for(SingleVariableDeclaration parameter:parameters){
-				if(parameter.getType().toString().compareTo(type) == 0)
-					localFields.add(parameter.getName().toString());
-			}
-			// No use currently. Just for test.
-			Block block = methodDec[iterator].getBody();
-			System.out.println("Block:"+block);
-			
-			//TODO: How to extract local variables.
-			// Now localFields doesn't contain the inner local variables.
-		}
-		return localFields;
+		return methodParameters;
 	}
+	
+	/**
+	 * @since 4-13-2014
+	 * Get all variables which appear in context except the input parameters of methods.
+	 * @return
+	 *  The names of all variables.
+	 */
+	public List<String> getAllVariables(){
+		final List<String> variables = new ArrayList<String>();
+		// Visitor pattern.
+		result.accept(new ASTVisitor(){
+			public boolean visit(VariableDeclarationFragment node) {
+				SimpleName name = node.getName();
+				if(!variables.contains(name.toString())){
+					variables.add(name.toString());
+				}
+				return false;
+			}
+
+		});
+		return variables;
+	}
+	
 }
