@@ -16,6 +16,7 @@ public class VariableStrategy extends CodeHandlerStrategy{
 		CodeExtractor extractor = new CodeExtractor(context);
 		List<String> variables = extractor.getGlobalFields();
 		variables.addAll(extractor.getLocalFields(ButtonsView.MethodName.toString()));
+		variables.add(";");
 		variables.add("+");
 		variables.add("-");
 		variables.add("/");
