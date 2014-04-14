@@ -14,6 +14,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
+import edu.uta.cse.controller.AnalysisController;
 import edu.uta.cse.strategy.CodeExtractor;
 import edu.uta.cse.strategy.TypeStrategy;
 import touchdevelopplugin.editors.TDPEditor;
@@ -45,6 +46,16 @@ public class ButtonsView extends ViewPart {
 	public static final String ID = "edu.uta.cse.views.ButtonsView";
 	public static String[] buttonText = {"Start to analysis"};
 	private TableViewer viewer;
+	public static StringBuffer MethodName;
+	public static int offetOfVariable;
+	public TableViewer getViewer() {
+		return viewer;
+	}
+
+	public void setViewer(TableViewer viewer) {
+		this.viewer = viewer;
+	}
+
 	private Action action1;
 	private Action action2;
 	/*
@@ -179,14 +190,14 @@ public class ButtonsView extends ViewPart {
 		}
 	   	 
     }
-	class ISelectionChange implements ISelectionChangedListener {
+	public class ISelectionChange implements ISelectionChangedListener {
 		TDPEditor editor;
 		ButtonsView view;
 		public String getSelectedStringFormEditor(TDPEditor editor){
 			StringBuffer sb = new StringBuffer("");
 			ITextViewer itv = editor.getJavaConfiguration().getDoubleClickStrategy().getfText();
 			int caretPos = itv.getSelectedRange().x;
-			char c;
+			char c=0;
 			int startPos, endPos;
 			IDocument doc = itv.getDocument();
 			
@@ -210,6 +221,47 @@ public class ButtonsView extends ViewPart {
 					++pos;
 				}
 				endPos = pos;
+				
+				char equalSign='=';
+				int startForMethod = 0, endForMethod= 0;
+				if(equalSign==c){
+					pos = caretPos;
+					while (pos >= 0) {
+						c = doc.getChar(pos);
+						char leftSign = '{';
+						if(leftSign!=c){
+							--pos;
+						}else{
+							break;
+						}
+					}
+					while (pos >= 0) {
+						c = doc.getChar(pos);
+						char bracketSign = '(';
+						if(bracketSign!=c){
+							--pos;
+						}else{
+							break;
+						}
+					}
+					endForMethod = pos--;
+					while (pos >= 0) {
+						c = doc.getChar(pos);
+						if (!Character.isJavaIdentifierPart(c))
+							break;
+						--pos;
+					}
+					startForMethod = pos--;
+					StringBuffer method = new StringBuffer("");
+					for(int i=0; i<endForMethod-startForMethod-1;i++){
+						method.append(doc.getChar(startForMethod+1+i));
+					}
+					MethodName = method;
+					System.out.println("======="+MethodName+"=======");
+					startPos = caretPos-1;
+					endPos = caretPos+1;
+				}
+				
 				for(int i=0; i<endPos-startPos-1;i++){
 					sb.append(doc.getChar(startPos+1+i));
 				}
@@ -227,20 +279,15 @@ public class ButtonsView extends ViewPart {
 		@Override
 		public void selectionChanged(SelectionChangedEvent arg0) {
 			// TODO Auto-generated method stub
-			
 			/**
-			 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
+			 * AnalysisController
 			 */
-			TypeStrategy ts = new TypeStrategy();
 			
-			String context = editor.getJavaConfiguration()
-					.getDoubleClickStrategy().getfText().getDocument().get();
-
-			String s = this.getSelectedStringFormEditor(editor);
-
-			ButtonsView.buttonText = ts.doAnalysis(context, s);
+			AnalysisController controller = new AnalysisController(this,editor,view);
+			System.out.println("selectionChanged:");
 			
-			view.viewer.setContentProvider(view.viewer.getContentProvider());
+			controller.excute();
+		
 		}
 	}
 
@@ -255,21 +302,21 @@ public class ButtonsView extends ViewPart {
 	    	TDPEditor editor =(TDPEditor)getSite().getPage().getActiveEditor();
 	    	if(editor.getJavaConfiguration().getDoubleClickStrategy().getfText()!=null){
 		     try {
-				editor.addPropertyListener(new IProperty(this.view));
-				editor.getJavaConfiguration().getDoubleClickStrategy().getfText().addTextListener(new ITextListener() {
-					
-					@Override
-					public void textChanged(TextEvent arg0) {
-						// TODO Auto-generated method stub
-						
-						/**
-						 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
-						 */
-						
-						ButtonsView.buttonText = new String[]{"textChanged","String","char","char"};
-						view.viewer.setContentProvider(view.viewer.getContentProvider());
-					}
-				});
+//				editor.addPropertyListener(new IProperty(this.view));
+//				editor.getJavaConfiguration().getDoubleClickStrategy().getfText().addTextListener(new ITextListener() {
+//					
+//					@Override
+//					public void textChanged(TextEvent arg0) {
+//						// TODO Auto-generated method stub
+//						
+//						/**
+//						 * add some strategy to decide ButtonsView.buttonText = new String[]{"int","String","char"};
+//						 */
+//						
+//						ButtonsView.buttonText = new String[]{"textChanged","String","char","char"};
+//						view.viewer.setContentProvider(view.viewer.getContentProvider());
+//					}
+//				});
 				editor.getJavaConfiguration().getDoubleClickStrategy().getfText().getSelectionProvider().addSelectionChangedListener(new ISelectionChange(editor,view));
 			
 				
@@ -278,13 +325,18 @@ public class ButtonsView extends ViewPart {
 				e.printStackTrace();
 			}
 		     this.repalceMethodName(event.getSelection().toString().substring(1,event.getSelection().toString().length()-1));
+//		     TDPEditor view = (TDPEditor)getSite().getPage().getActiveEditor();
+//		     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
+//		     int offset = start + 1;
+//			 int length = event.getSelection().toString().substring(1,event.getSelection().toString().length()-1).length();
+//		     view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
 		 }
 		     
 	    }
 	    private void repalceMethodName(String s){
 		     TDPEditor view = (TDPEditor)getSite().getPage().getActiveEditor();
-		     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor();
-		     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor();
+		     int start = view.getJavaConfiguration().getDoubleClickStrategy().getStartCursor()+offetOfVariable;;
+		     int end = view.getJavaConfiguration().getDoubleClickStrategy().getEndCursor()+offetOfVariable;
 		     IDocument doc =  view.getJavaConfiguration().getDoubleClickStrategy().getfText().getDocument();
 		     String content = doc.get();
 		     StringBuffer sb = new StringBuffer("");
@@ -294,14 +346,14 @@ public class ButtonsView extends ViewPart {
 		     doc.set(sb.toString());
 		     int offset = start + 1;
 			 int length = s.length();
-			 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
+			 offetOfVariable++;
+//			 view.getJavaConfiguration().getDoubleClickStrategy().getfText().setSelectedRange(offset, length);
 		}
 	   
 	}
 	private void hookDoubleClickAction() {
 		    viewer.addDoubleClickListener(new IDoubleClick(this));
 	}
-	
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 			viewer.getControl().getShell(),

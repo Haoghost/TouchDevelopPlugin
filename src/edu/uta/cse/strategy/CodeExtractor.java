@@ -114,7 +114,45 @@ public class CodeExtractor {
 	    	returnTypes.remove(returnTypeToBeModified);*/
 		return returnTypes;
 	}
+	/**
+	 * @since 4-13-2014
+	 * When user double click the access identifier type, 
+	 * this method will provide the probable content to replace the former type.
+	 * @param accessIdentifierToBeModified
+	 *  
+	 * @return
+	 * 	
+	 */
+	public List<String> getAccessIdentifierType(String accessIdentifierToBeModified) {
+		
+		List<String> accessIdentifierTypes = new ArrayList<String>();
 	
+		// Get types.
+		List types = result.types();
+		if(types.size() == 0)
+			return accessIdentifierTypes;
+		// Get type declaration.  
+		TypeDeclaration typeDec = (TypeDeclaration) types.get(0);
+	
+	    FieldDeclaration fieldDec[] = typeDec.getFields();
+	    for(int i = 0; i < Constant.accessIdentifierType.length; i++){
+	    	accessIdentifierTypes.add(Constant.accessIdentifierType[i]);
+	    }
+	    
+		for (FieldDeclaration fieldDecEle : fieldDec) {
+			Modifier modify = null;
+			for (Object modifiObj : fieldDecEle.modifiers()) {
+				modify = (Modifier) modifiObj;
+			}
+
+			if (modify == null)
+				break;
+			if (!accessIdentifierTypes.contains(modify.toString()))
+				accessIdentifierTypes.add(modify.toString());
+		}
+		// Remove the original type.
+		return accessIdentifierTypes;
+	}
 	/**
 	 * Get global variables.
 	 * @since 3-24-2014

@@ -19,5 +19,12 @@ public class Constant {
 		"List",
 		"ArrayList"};
 
-
+	/**
+	 * Basic types, including field type, method return type, parameter type and so on.
+	 */
+	public static String[] accessIdentifierType = {
+		"public",
+		"private",
+		"protected",
+		};
 }

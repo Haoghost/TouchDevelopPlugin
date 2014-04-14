@@ -107,7 +107,7 @@ public class TDPDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 		try {
 			int pos = caretPos;
-			char c;
+			char c=0;
 
 			while (pos >= 0) {
 				c = doc.getChar(pos);
@@ -129,12 +129,50 @@ public class TDPDoubleClickStrategy implements ITextDoubleClickStrategy {
 			selectRange(startPos, endPos);
 			this.setStartCursor(startPos);
 			this.setEndCursor(endPos);
+			char equalSign='=';
+			int startForMethod = 0, endForMethod= 0;
+			if(equalSign==c){
+				pos = caretPos;
+				while (pos >= 0) {
+					c = doc.getChar(pos);
+					char leftSign = '{';
+					if(leftSign!=c){
+						--pos;
+					}else{
+						break;
+					}
+				}
+				while (pos >= 0) {
+					c = doc.getChar(pos);
+					char bracketSign = '(';
+					if(bracketSign!=c){
+						--pos;
+					}else{
+						break;
+					}
+				}
+				endForMethod = pos--;
+				while (pos >= 0) {
+					c = doc.getChar(pos);
+					if (!Character.isJavaIdentifierPart(c))
+						break;
+					--pos;
+				}
+				startForMethod = pos--;
+				StringBuffer method = new StringBuffer("");
+				for(int i=0; i<endForMethod-startForMethod-1;i++){
+					method.append(doc.getChar(startForMethod+1+i));
+				}
+				this.setStartCursor(caretPos);
+				this.setEndCursor(caretPos+2);
+			}
+			
 			for(int i=0; i<endPos-startPos-1;i++){
 				sb.append(doc.getChar(startPos+1+i));
 			}
 //			ButtonsView.buttonText = new String[]{"int","String","char"};
 			
-			System.out.println(sb);
+			System.out.println("~~~~~~~~~~~~~~~~"+sb);
 			SelectedWord = sb;
 			
 			return true;
