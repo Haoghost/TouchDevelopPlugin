@@ -1,11 +1,16 @@
 package edu.uta.cse.strategy;
-
+/**
+ * 
+ * @author Hui Zhou
+ *
+ */
 public class AccessStrategy extends CodeHandlerStrategy{
 
 	@Override
-	public String[] doAnalysis(CodeExtractor cfr, String contex, String selectedWord) {
-		// TODO Auto-generated method stub
-		return "".split("");
+	public String[] doAnalysis(String contex, String selectedWord) {
+		// There are only three kinds of modifiers.
+		String[] modifier = new String[]{"public","private","protect"};
+		return modifier;
 	}
 
 }

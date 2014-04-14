@@ -1,21 +1,11 @@
 package edu.uta.cse.views;
 
-
-import java.util.List;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
@@ -26,16 +16,10 @@ import org.eclipse.swt.SWT;
 
 import edu.uta.cse.strategy.CodeExtractor;
 import edu.uta.cse.strategy.TypeStrategy;
-import touchdevelopplugin.editors.TDPDoubleClickStrategy;
 import touchdevelopplugin.editors.TDPEditor;
 
 
 /**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
  * The view is connected to the model using a content provider.
  * <p>
  * The view uses a label provider to define how model
@@ -46,6 +30,11 @@ import touchdevelopplugin.editors.TDPEditor;
  * in order to ensure that objects of the same type are
  * presented in the same way everywhere.
  * <p>
+ * 
+ * @author Hui Zhou <p>
+ * Modified by : Bo Zhang
+ * @see http://www.eclipse.org/articles/viewArticle/ViewArticle2.html
+ * 
  */
 
 public class ButtonsView extends ViewPart {
@@ -58,7 +47,6 @@ public class ButtonsView extends ViewPart {
 	private TableViewer viewer;
 	private Action action1;
 	private Action action2;
-	private CodeExtractor codeFileReader;
 	/*
 	 * The content provider class is responsible for
 	 * providing objects to the view. It can wrap
@@ -97,8 +85,7 @@ public class ButtonsView extends ViewPart {
 	 * The constructor.
 	 */
 	public ButtonsView() {
-		//ASTParser parser = ASTParser.newParser(AST.JLS4);
-		codeFileReader = new CodeExtractor();
+	
 	}
 
 	/**
@@ -106,12 +93,13 @@ public class ButtonsView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
-
+	
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "TouchDevelopPlugin.viewer");
 		makeActions();
@@ -247,16 +235,10 @@ public class ButtonsView extends ViewPart {
 			
 			String context = editor.getJavaConfiguration()
 					.getDoubleClickStrategy().getfText().getDocument().get();
-		
-			if (codeFileReader != null) {
-				codeFileReader.setContent(context);
-				String s = this.getSelectedStringFormEditor(editor);
 
-				
-				ButtonsView.buttonText = ts.doAnalysis(codeFileReader, context, s);
-			} else {
-				ButtonsView.buttonText = new String[] { "codeFileReader is null" };
-			}
+			String s = this.getSelectedStringFormEditor(editor);
+
+			ButtonsView.buttonText = ts.doAnalysis(context, s);
 			
 			view.viewer.setContentProvider(view.viewer.getContentProvider());
 		}
@@ -334,7 +316,4 @@ public class ButtonsView extends ViewPart {
 		viewer.getControl().setFocus();
 	}
 	
-	class ParseThread extends Thread{
-		
-	}
 }
